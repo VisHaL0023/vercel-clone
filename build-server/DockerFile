@@ -1,0 +1,23 @@
+FROM ubuntu:focal
+
+# For updating all modules
+RUN apt-get update
+
+# For fetching api calls
+RUN apt-get install -y curl
+
+# For installing node.js
+RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
+RUN apt-get upgrade -y
+RUN apt-get install -y nodejs
+
+# To install git
+RUN apt-get install git -y
+
+# Set working directory
+WORKDIR /home/app
+
+# Copy main.sh file 
+COPY main.sh main.sh
+
+ENTRYPOINT [ "/home/app/main.sh" ]

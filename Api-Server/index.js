@@ -11,7 +11,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 app.use(cors());
-const PORT = 9000;
+const PORT = process.env.PORT;
 
 const REDIS_KEY = process.env.REDIS_KEY;
 const subscriber = new Redis(REDIS_KEY);
@@ -25,7 +25,9 @@ io.on("connection", (socket) => {
     });
 });
 
-io.listen(9001, () => console.log("Socket sercer 9001.."));
+io.listen(process.env.SCOKET_PORT, () =>
+    console.log(`Socket sercer ${process.env.SOCKET_PORT}..`)
+);
 
 app.use(express.json());
 

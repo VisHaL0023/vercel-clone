@@ -6,6 +6,9 @@ const Redis = require("ioredis");
 const { Server } = require("socket.io");
 const cors = require("cors");
 const app = express();
+const dotenv = require("dotenv");
+
+dotenv.config();
 
 app.use(cors());
 const PORT = 9000;

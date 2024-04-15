@@ -7,7 +7,7 @@ import { Github } from "lucide-react";
 import { Fira_Code } from "next/font/google";
 import axios from "axios";
 
-const socket = io("http://localhost:9001");
+const socket = io("https://api-server-9dwv.onrender.com:9001");
 
 const firaCode = Fira_Code({ subsets: ["latin"] });
 
@@ -38,10 +38,13 @@ export default function Home() {
     const handleClickDeploy = useCallback(async () => {
         setLoading(true);
 
-        const { data } = await axios.post(`http://localhost:9000/project`, {
-            gitURL: repoURL,
-            slug: projectId,
-        });
+        const { data } = await axios.post(
+            `https://api-server-9dwv.onrender.com/project`,
+            {
+                gitURL: repoURL,
+                slug: projectId,
+            }
+        );
 
         if (data && data.data) {
             const { projectSlug, url } = data.data;

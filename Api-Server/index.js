@@ -4,6 +4,11 @@ const { generateSlug } = require("random-word-slugs");
 const { CLUSTER, TASK, SUBNETS, SECURITY_GROUP } = require("./config");
 const Redis = require("ioredis");
 const { Server } = require("socket.io");
+const cors = require("cors");
+const app = express();
+
+app.use(cors());
+const PORT = 9000;
 
 const REDIS_KEY = process.env.REDIS_KEY;
 const subscriber = new Redis(REDIS_KEY);
@@ -19,21 +24,19 @@ io.on("connection", (socket) => {
 
 io.listen(9001, () => console.log("Socket sercer 9001.."));
 
-const app = express();
-const PORT = 9000;
-
 app.use(express.json());
 
 const ecsClient = new ECSClient({
-    region: process.env.AWS_REGION,
+    region: process.env.S3_REGION,
     credentials: {
-        accessKeyId: process.env.AWS_ACCESS_ID,
-        secretAccessKey: process.env.AWS_SECRET_KEY,
+        accessKeyId: process.env.S3_ACCESS_KEY_ID,
+        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
     },
 });
 
 app.post("/project", async (req, res) => {
     const { gitURL, slug } = req.body;
+    if (!gitURL) return res.status(403, "URL is required");
     const projectSlug = slug ? slug : generateSlug();
 
     // Spin the container
@@ -52,7 +55,7 @@ app.post("/project", async (req, res) => {
         overrides: {
             containerOverrides: [
                 {
-                    name: process.env.CONTAINER_NAME,
+                    name: process.env.CONTAINER_IMAGE,
                     environment: [
                         { name: "GIT_REPOSITORY__URL", value: gitURL },
                         { name: "PROJECT_ID", value: projectSlug },
@@ -61,9 +64,7 @@ app.post("/project", async (req, res) => {
             ],
         },
     });
-
     await ecsClient.send(command);
-
     return res.json({
         status: "queued",
         data: { projectSlug, url: `http://${projectSlug}.localhost:8000` },

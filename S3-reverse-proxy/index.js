@@ -10,7 +10,7 @@ const proxy = httpProxy.createProxy();
 
 app.use((req, res) => {
     const hostname = req.hostname;
-    const subDomain = hostname.split(".")[0];
+    const subDomain = hostname.split("#")[1];
 
     const resolveTo = `${BUCKET_PATH}/${subDomain}`;
 

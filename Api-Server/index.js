@@ -70,7 +70,10 @@ app.post("/project", async (req, res) => {
     await ecsClient.send(command);
     return res.json({
         status: "queued",
-        data: { projectSlug, url: `http://${projectSlug}.localhost:8000` },
+        data: {
+            projectSlug,
+            url: `https://vercel-clone-nae3.onrender.com/#${projectSlug}`,
+        },
     });
 });
 

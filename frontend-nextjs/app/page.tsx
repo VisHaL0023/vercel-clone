@@ -7,7 +7,7 @@ import { Github } from "lucide-react";
 import { Fira_Code } from "next/font/google";
 import axios from "axios";
 
-const socket = io("https://api-server-9dwv.onrender.com:9001");
+const socket = io("http://localhost:9002");
 
 const firaCode = Fira_Code({ subsets: ["latin"] });
 
@@ -38,19 +38,16 @@ export default function Home() {
     const handleClickDeploy = useCallback(async () => {
         setLoading(true);
 
-        const { data } = await axios.post(
-            `https://api-server-9dwv.onrender.com/project`,
-            {
-                gitURL: repoURL,
-                slug: projectId,
-            }
-        );
+        const { data } = await axios.post(`http://localhost:9000/project`, {
+            gitURL: repoURL,
+            slug: projectId,
+        });
 
         if (data && data.data) {
             const { projectSlug, url } = data.data;
             setProjectId(projectSlug);
             setDeployPreviewURL(url);
-            setLogs(["Please wait"]);
+            setLogs(["Please wait, starting your build..."]);
 
             console.log(`Subscribing to logs:${projectSlug}`);
             socket.emit("subscribe", `logs:${projectSlug}`);
@@ -107,10 +104,10 @@ export default function Home() {
                     <div className="mt-2 bg-slate-900 py-4 px-2 rounded-lg">
                         {isDone ? (
                             <p>
-                                Preview URL{" "}
+                                Preview URL:{" "}
                                 <a
                                     target="_blank"
-                                    className="text-sky-400 bg-sky-950 px-3 py-2 rounded-lg"
+                                    className="text-sky-400 bg-sky-950 px-3 py-2 rounded-lg ml-3"
                                     href={deployPreviewURL}
                                 >
                                     {deployPreviewURL}

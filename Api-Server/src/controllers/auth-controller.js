@@ -5,10 +5,10 @@ const { StatusCodes } = require("http-status-codes");
 async function CreateUser(req, res) {
     try {
         // destructure all values
-        const { name, email, password, otp } = req.body;
+        const { firstName, lastName, email, password, otp } = req.body;
 
         // Check if all required fields are present
-        if (!name || !email || !password || !otp) {
+        if (!firstName || !lastName || !email || !password || !otp) {
             errorObj.message = "All fields are required";
             errorObj.success = false;
             return res.status(StatusCodes.FORBIDDEN).json(errorObj);
@@ -16,7 +16,8 @@ async function CreateUser(req, res) {
 
         // Calling user-service for creating user
         const response = await UserService.SignUp({
-            name,
+            firstName,
+            lastName,
             email,
             password,
             otp,

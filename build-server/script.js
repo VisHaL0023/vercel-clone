@@ -2,19 +2,8 @@ const { exec } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
-const dotenv = require("dotenv");
 const mime = require("mime-types");
-const Redis = require("ioredis");
-
-dotenv.config();
-const REDIS_KEY = process.env.REDIS_KEY;
-const publisher = new Redis(REDIS_KEY);
-
-const PROJECT_ID = process.env.PROJECT_ID;
-
-function publishlog(log) {
-    publisher.publish(`logs:${PROJECT_ID}`, JSON.stringify({ log }));
-}
+const { Kafka } = require("kafkajs");
 
 const s3Client = new S3Client({
     region: process.env.S3_REGION,
@@ -24,9 +13,47 @@ const s3Client = new S3Client({
     },
 });
 
+const PROJECT_ID = process.env.PROJECT_ID;
+const DEPLOYEMENT_ID = process.env.DEPLOYEMENT_ID;
+
+const kafka = new Kafka({
+    clientId: `docker-build-server-${DEPLOYEMENT_ID}`,
+    brokers: [process.env.KAFKA_BROKERS],
+    ssl: {
+        ca: [fs.readFileSync(path.join(__dirname, "kafka.pem"), "utf-8")],
+    },
+    sasl: {
+        username: process.env.KAFKA_USERNAME,
+        password: process.env.KAFKA_PASSWORD,
+        mechanism: "plain",
+    },
+    connectionTimeout: 100000,
+    requestTimeout: 25000,
+    retry: {
+        initialRetryTime: 100,
+        retries: 10,
+    },
+});
+
+const producer = kafka.producer();
+
+async function publishlog(log) {
+    await producer.send({
+        topic: process.env.KAFKA_TOPICS,
+        messages: [
+            {
+                key: "log",
+                value: JSON.stringify({ PROJECT_ID, DEPLOYEMENT_ID, log }),
+            },
+        ],
+    });
+}
+
 async function init() {
+    await producer.connect();
+
     console.log("Executing script.js");
-    publishlog("Building...");
+    await publishlog("Building...");
     const build_outputs_path = path.join(__dirname, "build_outputs");
 
     // to install packages and build project
@@ -35,21 +62,21 @@ async function init() {
     );
 
     // for ongoing process output
-    build_process.stdout.on("data", function (data) {
+    build_process.stdout.on("data", async function (data) {
         console.log(data.toString());
-        publishlog(data.toString());
+        await publishlog(data.toString());
     });
 
     // for error process output
-    build_process.stdout.on("error", function (data) {
+    build_process.stdout.on("error", async function (data) {
         console.log("Error", data.toString());
-        publishlog(`error:${data.toString()}`);
+        await publishlog(`error:${data.toString()}`);
     });
 
     // for completed process
-    build_process.stdout.on("close", async function (data) {
+    build_process.stdout.on("close", async function () {
         console.log("Build complete");
-        publishlog("Build completed");
+        await publishlog("Build completed");
 
         // getting Dist forlder path
         const distFolderPath = path.join(__dirname, "build_outputs", "dist");
@@ -58,7 +85,7 @@ async function init() {
             recursive: true,
         });
 
-        publishlog("Starting upload");
+        await publishlog("Starting upload");
         for (const file of distFolderContents) {
             const filePath = path.join(distFolderPath, file);
 
@@ -66,7 +93,7 @@ async function init() {
             if (fs.lstatSync(filePath).isDirectory()) continue;
 
             console.log("uploading", filePath);
-            publishlog(`uploading ${file}`);
+            await publishlog(`uploading ${file}`);
 
             // else upload it on s3
             const command = new PutObjectCommand({
@@ -79,10 +106,11 @@ async function init() {
 
             await s3Client.send(command);
             console.log("uploaded", filePath);
-            publishlog(`uploaded ${filePath}`);
+            await publishlog(`uploaded ${filePath}`);
         }
-        publishlog("Done");
+        await publishlog("Done");
         console.log("Done...");
+        process.exit(0);
     });
 }
 

@@ -1,4 +1,5 @@
 const ServerConfig = require("./ServerConfig");
-const RedisConfig = require("./Redis-Subscriber");
+const { initKafkaConsumer } = require("./Kafka-Config");
+const { clickHouseClient } = require("./ClickHouseConfig");
 
-module.exports = { ServerConfig, RedisConfig };
+module.exports = { ServerConfig, initKafkaConsumer, clickHouseClient };

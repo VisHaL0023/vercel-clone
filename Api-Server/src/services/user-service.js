@@ -38,14 +38,16 @@ async function SignUp(reqbody) {
         // if user not present already then we can create user
         if (!user) {
             // Check OTP for the user in OTP model
-            const response = await prisma.oTP.findUnique({
+            const response = await prisma.oTP.findFirst({
                 where: {
                     email: reqbody.email,
                 },
             });
 
+            console.log("otp", response);
+
             // OTP not found for the email or not equal to otp
-            if (response.length === 0 || reqbody.otp !== response[0].otp) {
+            if (response.length === 0 || reqbody.otp !== response.otp) {
                 throw {
                     success: false,
                     message: "The OTP is not valid",
@@ -57,11 +59,13 @@ async function SignUp(reqbody) {
 
             // Creating user
             const user = await prisma.user.create({
-                firstName: reqbody.firstName,
-                lastName: reqbody.lastName,
-                email: reqbody.email,
-                password: encryptedPassword,
-                image: reqbody.img || "sample", // TODO: needs to add real image
+                data: {
+                    firstName: reqbody.firstName,
+                    lastName: reqbody.lastName,
+                    email: reqbody.email,
+                    password: encryptedPassword,
+                    image: reqbody.img || "sample", // TODO: needs to add real image
+                },
             });
             return user;
         }
@@ -80,8 +84,10 @@ async function SignUp(reqbody) {
 async function SignIn(reqbody) {
     try {
         // checking if user is present
-        const user = await this.userRepository.findOne({
-            email: reqbody.email,
+        const user = await prisma.user.findFirst({
+            where: {
+                email: reqbody.email,
+            },
         });
 
         if (!user) {
@@ -130,6 +136,16 @@ async function SendOtp(email) {
             throw {
                 message: "User already exists for given email",
             };
+        }
+
+        const isOTPGenerated = await prisma.oTP.findFirst({
+            where: {
+                email: email,
+            },
+        });
+
+        if (isOTPGenerated) {
+            return { email: email, otp: isOTPGenerated.otp };
         }
 
         // Generating OTP

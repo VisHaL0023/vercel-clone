@@ -1,18 +1,26 @@
 const express = require("express");
 const httpProxy = require("http-proxy");
+const { PrismaClient } = require("@prisma/client");
 
 const app = express();
 const PORT = 8000;
+const prisma = new PrismaClient();
 
 const BUCKET_PATH = process.env.BUCKET_PATH;
 
 const proxy = httpProxy.createProxy();
 
-app.use((req, res) => {
+app.use(async (req, res) => {
     const hostname = req.hostname;
-    const subDomain = hostname.split("#")[1];
+    const subDomain = hostname.split(".")[0];
 
-    const resolveTo = `${BUCKET_PATH}/${subDomain}`;
+    let project = await prisma.project.findFirst({
+        where: {
+            subDomain: subDomain,
+        },
+    });
+
+    const resolveTo = `${BUCKET_PATH}/${project.id}`;
 
     return proxy.web(req, res, { target: resolveTo, changeOrigin: true });
 });

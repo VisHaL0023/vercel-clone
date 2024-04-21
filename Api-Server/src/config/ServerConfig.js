@@ -20,8 +20,17 @@ const SUBNETS = [
     process.env.SUBNETS_2,
     process.env.SUBNETS_3,
 ];
-
 const SECURITY_GROUP = [process.env.SECURITY_GROUP];
+const CLICKHOUSE_HOST = process.env.CLICKHOUSE_HOST;
+const CLICKHOUSE_USERNAME = process.env.CLICKHOUSE_USERNAME;
+const CLICKHOUSE_PASSWORD = process.env.CLICKHOUSE_PASSWORD;
+
+const KAFKA_CLIENT_ID = process.env.KAFKA_CLIENT_ID;
+const KAFKA_BROKERS = process.env.KAFKA_BROKERS;
+const KAFKA_USERNAME = process.env.KAFKA_USERNAME;
+const KAFKA_PASSWORD = process.env.KAFKA_PASSWORD;
+const KAFKA_GROUP_ID = process.env.KAFKA_GROUP_ID;
+const KAFKA_TOPICS = process.env.KAFKA_TOPICS;
 
 module.exports = {
     PORT,
@@ -39,4 +48,13 @@ module.exports = {
     TASK,
     SUBNETS,
     SECURITY_GROUP,
+    CLICKHOUSE_HOST,
+    CLICKHOUSE_USERNAME,
+    CLICKHOUSE_PASSWORD,
+    KAFKA_CLIENT_ID,
+    KAFKA_BROKERS,
+    KAFKA_USERNAME,
+    KAFKA_PASSWORD,
+    KAFKA_GROUP_ID,
+    KAFKA_TOPICS,
 };

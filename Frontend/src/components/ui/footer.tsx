@@ -3,9 +3,9 @@ import DarkModeBtn from "../DarkModeBtn";
 
 type Props = {};
 
-export default function footer({}: Props) {
+export default function Footer({}: Props) {
     return (
-        <div>
+        <div className="p-8">
             <DarkModeBtn />
         </div>
     );

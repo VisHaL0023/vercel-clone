@@ -6,3 +6,4 @@ src/config/config.json
 .netlify
 kafka.pem
 ca.pem
+build-server/script.js

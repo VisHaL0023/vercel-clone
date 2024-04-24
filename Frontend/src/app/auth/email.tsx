@@ -1,4 +1,3 @@
-"use client";
 import React, { ChangeEvent, useCallback, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { FaArrowRight } from "react-icons/fa";
@@ -7,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import toast from "react-hot-toast";
 import axiosInstance from "@/config/axiosInstance";
 import { useRouter } from "next/navigation";
+import { useGlobalContext } from "../context/AuthContext";
 
 interface Props {
     setVarriant: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -19,6 +19,7 @@ interface UserData {
 
 const Email: React.FC<Props> = ({ setVarriant }) => {
     const router = useRouter();
+    const { setUser, setToken } = useGlobalContext();
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [userData, setUserData] = useState<UserData>({
@@ -40,12 +41,19 @@ const Email: React.FC<Props> = ({ setVarriant }) => {
 
         if (!userData.email || !userData.password) {
             toast.error("All fields required");
+            setIsLoading(false);
             return;
         }
 
         try {
             const response = await axiosInstance.post("auth/login", userData);
-            console.log("response", response);
+
+            const data = response.data.data;
+            localStorage.setItem("token", JSON.stringify(data.token));
+
+            setUser(data.user);
+            setToken(data.token);
+
             toast.success("Logged in");
             router.push("/");
         } catch (error: any) {

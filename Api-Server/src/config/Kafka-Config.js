@@ -23,6 +23,8 @@ const kafka = new Kafka({
         password: KAFKA_PASSWORD,
         mechanism: "plain",
     },
+    requestTimeout: 60000,
+    retry: 10,
 });
 
 const consumer = kafka.consumer({ groupId: KAFKA_GROUP_ID });

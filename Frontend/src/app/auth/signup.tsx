@@ -6,6 +6,11 @@ import { CiMail } from "react-icons/ci";
 import { Input } from "@/components/ui/input";
 import axiosInstance from "../../config/axiosInstance";
 import toast from "react-hot-toast";
+import {
+    InputOTP,
+    InputOTPGroup,
+    InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 interface Props {
     setVarriant: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -16,18 +21,17 @@ interface UserData {
     lastName: string;
     email: string;
     password: string;
-    otp: string;
 }
 
 const SignUp: React.FC<Props> = ({ setVarriant }) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [sendOTP, setSendOTP] = useState<boolean>(false);
+    const [otp, setOTP] = useState<string>("");
     const [userData, setUserData] = useState<UserData>({
         firstName: "",
         lastName: "",
         email: "",
         password: "",
-        otp: "",
     });
 
     function handleInputChange(e: ChangeEvent<HTMLInputElement>) {
@@ -74,14 +78,20 @@ const SignUp: React.FC<Props> = ({ setVarriant }) => {
             !userData.lastName ||
             !userData.email ||
             !userData.password ||
-            !userData.otp
+            !otp
         ) {
             toast.error("All fields required");
             return;
         }
 
         try {
-            const response = await axiosInstance.post("auth/signup", userData);
+            const response = await axiosInstance.post("auth/signup", {
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                email: userData.email,
+                password: userData.password,
+                otp: otp,
+            });
             console.log("response", response);
             toast.success("User created");
             setVarriant("email");
@@ -145,16 +155,27 @@ const SignUp: React.FC<Props> = ({ setVarriant }) => {
                         />
                     </>
                 ) : (
-                    <Input
-                        name="otp"
-                        className="mb-3"
-                        placeholder="Enter OTP"
-                        type="text"
-                        max={6}
-                        min={6}
-                        value={userData.otp}
-                        onChange={handleInputChange}
-                    />
+                    <div className="flex flex-col gap-4 items-center justify-center">
+                        <InputOTP
+                            maxLength={6}
+                            className="my-5"
+                            value={otp}
+                            onChange={(value) => setOTP(value)}
+                        >
+                            <InputOTPGroup>
+                                <InputOTPSlot index={0} />
+                                <InputOTPSlot index={1} />
+                                <InputOTPSlot index={2} />
+                                <InputOTPSlot index={3} />
+                                <InputOTPSlot index={4} />
+                                <InputOTPSlot index={5} />
+                            </InputOTPGroup>
+                        </InputOTP>
+                        <p className="text-gray-300 mb-5">
+                            Please enter the one-time password sent to your
+                            email.
+                        </p>
+                    </div>
                 )}
                 <Button
                     className="border border-gray-400"

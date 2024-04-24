@@ -11,8 +11,8 @@ async function authenticate(req, res, next) {
     try {
         //extract token
         const token =
-            req.cookies.token ||
             req.body.token ||
+            req.cookies.token ||
             req.header("Authorisation").replace("Bearer ", "");
 
         //if token missing, then return response

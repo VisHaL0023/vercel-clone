@@ -1,3 +1,5 @@
+import axiosInstance from "@/config/axiosInstance";
+
 export function getSession() {
     // Get all cookies as a string
     const cookiesString = document.cookie;
@@ -11,9 +13,36 @@ export function getSession() {
         cookies[name] = value;
     });
 
-    return cookies?.__session;
+    return cookies?.__clerk_db_jwt;
 }
 
 export function removeSession() {
     document.cookie = "";
+    localStorage.clear();
+}
+
+export function getToken() {
+    let token = localStorage.getItem("token");
+    token = token ? token.replace(/^"|"$/g, "") : null;
+
+    return token;
+}
+
+export async function getCurrUser(token: string | null) {
+    if (!token) {
+        return false;
+    }
+
+    try {
+        const response = await axiosInstance.get("auth/getUserByToken", {
+            headers: {
+                Authorisation: token,
+            },
+        });
+
+        return response.data.data;
+    } catch (error) {
+        console.log("error while getting users", error);
+        return null;
+    }
 }

@@ -6,6 +6,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { cn } from "@/lib/utils";
 import { Toaster } from "react-hot-toast";
+import { GlobalContextProvider } from "./context/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,7 +28,9 @@ export default function RootLayout({
                     inter.className
                 )}
             >
-                <Providers>{children}</Providers>
+                <GlobalContextProvider>
+                    <Providers>{children}</Providers>
+                </GlobalContextProvider>
                 <Toaster />
             </body>
         </html>

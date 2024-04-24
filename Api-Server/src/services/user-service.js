@@ -150,7 +150,7 @@ async function SendOtp(email) {
 
         // Generating OTP
         var otp = otpGenerator.generate(6, {
-            upperCaseAlphabets: true,
+            upperCaseAlphabets: false,
             lowerCaseAlphabets: false,
             specialChars: false,
         });

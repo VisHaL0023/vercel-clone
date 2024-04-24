@@ -6,10 +6,10 @@ const router = Router();
 // Auth routes
 router.post("/create", authenticate, BuildController.CreateProject);
 router.post("/deploy", authenticate, BuildController.DeployProject);
-router.get(
-    "/logs/:id",
+router.post(
+    "/logs",
     authenticate,
-    authenticateUser,
+
     BuildController.ProjectLogs
 );
 

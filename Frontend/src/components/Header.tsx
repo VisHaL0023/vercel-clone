@@ -1,6 +1,5 @@
 /** @format */
-
-import React from "react";
+import React, { useEffect } from "react";
 
 import VercelSvg from "./svg/vercel-svg";
 import { HiOutlineChevronUpDown } from "react-icons/hi2";
@@ -10,44 +9,34 @@ import { BsSlashLg } from "react-icons/bs";
 import { FaEquals } from "react-icons/fa";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
+import { useGlobalContext } from "@/app/context/AuthContext";
+import { tabNames } from "@/constant/tabName";
+import { getCurrUser } from "@/lib/getSession";
+
 type Props = {};
 
-const pages = [
-    {
-        title: "Overview",
-        active: true,
-    },
-    {
-        title: "Integrations",
-        active: false,
-    },
-    {
-        title: "Activity",
-        active: false,
-    },
-    {
-        title: "Domains",
-        active: false,
-    },
-    {
-        title: "Usage",
-        active: false,
-    },
-    {
-        title: "Storage",
-        active: false,
-    },
-    {
-        title: "Monitoring",
-        active: false,
-    },
-    {
-        title: "Settings",
-        active: false,
-    },
-];
+const pages = tabNames;
 
 export default function Header() {
+    const { user, setUser, setToken } = useGlobalContext();
+
+    async function fetchData() {
+        let token = localStorage.getItem("token");
+        token = token ? token.replace(/^"|"$/g, "") : null;
+
+        if (!token) {
+            return;
+        }
+        const users = await getCurrUser(token);
+
+        setToken(token);
+        setUser(users);
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, [setUser, setToken]);
+
     return (
         <div className=" px-8 pt-4 border-b border-gray-500">
             {/* first section */}
@@ -60,7 +49,7 @@ export default function Header() {
 
                     <div className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500  h-5 w-5 rounded-full" />
 
-                    <p className="font-bold">Name</p>
+                    <p className="font-bold">{user.firstName}</p>
                     <button
                         className=" p-2 text-xl transition-all hover:dark:bg-gray-800 py-3 rounded-md
         "

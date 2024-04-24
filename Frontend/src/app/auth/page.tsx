@@ -5,8 +5,6 @@ import Footer from "@/components/ui/Footer";
 import AuthProvider from "./authProvider";
 import Email from "./email";
 import SignUp from "./signup";
-import { useRouter } from "next/navigation";
-import { getSession } from "@/lib/getSession";
 
 type Props = {};
 
@@ -14,12 +12,6 @@ const Page = (props: Props) => {
     const [varriant, setVarriant] = useState<string | undefined>(
         "authProvider"
     );
-    const session = getSession();
-    const router = useRouter();
-
-    if (session) {
-        router.push("/");
-    }
 
     useEffect(() => {}, [varriant]);
 

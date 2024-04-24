@@ -14,6 +14,7 @@ const AuthProvider: React.FC<Props> = ({ setVarriant }) => {
     const toggleVariant = useCallback((val: string) => {
         setVarriant(val);
     }, []);
+
     return (
         <div className="mt-10 flex flex-col items-center gap-3 justify-center">
             <p className="text-3xl font-bold">Log in to Vercel</p>

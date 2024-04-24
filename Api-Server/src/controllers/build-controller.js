@@ -135,11 +135,16 @@ async function CreateProject(req, res) {
 
 async function ProjectLogs(req, res) {
     try {
-        const id = req.params.id;
+        const deployementId = req.body.deployementId;
+        if (!deployementId) {
+            errorObj.success = false;
+            errorObj.message = "deployementId is not found";
+            return res.status(StatusCodes.BAD_REQUEST).json(errorObj);
+        }
         const logs = await clickHouseClient.query({
             query: `SELECT event_id, deployment_id, log, timestamp from log_events where deployment_id = {deployment_id:String}`,
             query_params: {
-                deployment_id: id,
+                deployment_id: deployementId,
             },
             format: "JSONEachRow",
         });

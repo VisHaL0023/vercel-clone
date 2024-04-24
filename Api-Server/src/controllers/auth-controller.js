@@ -1,12 +1,15 @@
 const { UserService } = require("../services/index.js");
 const { errorObj, successObj } = require("../utils/index.js");
 const { StatusCodes } = require("http-status-codes");
+const { PrismaClient } = require("@prisma/client");
+
+const prisma = new PrismaClient();
 
 async function CreateUser(req, res) {
     try {
         // destructure all values
         const { firstName, lastName, email, password, otp } = req.body;
-
+        console.log({ firstName, lastName, email, password, otp });
         // Check if all required fields are present
         if (!firstName || !lastName || !email || !password || !otp) {
             errorObj.message = "All fields are required";
@@ -103,4 +106,27 @@ async function SendOtp(req, res) {
     }
 }
 
-module.exports = { SendOtp, LogIn, CreateUser };
+async function getUserDetails(req, res) {
+    try {
+        const userId = req.user.id;
+
+        console.log("userId", userId);
+        const response = await prisma.user.findFirst({
+            where: {
+                id: userId,
+            },
+        });
+        response.password = undefined;
+        successObj.message = "User details";
+        successObj.data = response;
+        return res.status(StatusCodes.OK).json(successObj);
+    } catch (error) {
+        // Handle error
+        errorObj.message = "User not found";
+        errorObj.err = error;
+
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json(errorObj);
+    }
+}
+
+module.exports = { SendOtp, LogIn, CreateUser, getUserDetails };

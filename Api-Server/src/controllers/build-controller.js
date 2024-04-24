@@ -81,11 +81,14 @@ async function DeployProject(req, res) {
         });
         await ecsClient.send(command);
 
+        const domain = project.customDomain
+            ? project.customDomain
+            : project.subDomain;
         return res.json({
             status: "queued",
             data: {
                 deployementId: deployement.id,
-                url: `http://${project.subDomain}.localhost:8000`,
+                url: `http://${domain}.localhost:8000`,
             },
         });
     } catch (error) {
@@ -102,21 +105,23 @@ async function CreateProject(req, res) {
         const schema = z.object({
             name: z.string(),
             gitURL: z.string(),
+            customDomain: z.string(),
         });
         const safeParseResult = schema.safeParse(req.body);
-
+        console.log("not");
         if (safeParseResult.error) {
             errorObj.message = safeParseResult.error;
             errorObj.success = false;
             return res.status(StatusCodes.FORBIDDEN).json(errorObj);
         }
-        const { name, gitURL } = safeParseResult.data;
+        const { name, gitURL, customDomain } = safeParseResult.data;
 
         const project = await prisma.project.create({
             data: {
                 name,
                 gitURL,
                 subDomain: generateSlug(2),
+                customDomain: customDomain ? customDomain : undefined,
                 user: { connect: { id: req.user.id } },
             },
         });

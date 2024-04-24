@@ -4,11 +4,11 @@ export const tabNames = [
         active: true,
     },
     {
-        title: "Integrations",
+        title: "Projects",
         active: false,
     },
     {
-        title: "Activity",
+        title: "Create",
         active: false,
     },
     {

@@ -12,13 +12,21 @@ const proxy = httpProxy.createProxy();
 
 app.use(async (req, res) => {
     const hostname = req.hostname;
-    const subDomain = hostname.split(".")[0];
+    const domain = hostname.split(".")[0];
 
     let project = await prisma.project.findFirst({
         where: {
-            subDomain: subDomain,
+            customDomain: domain,
         },
     });
+
+    if (!project) {
+        project = await prisma.project.findFirst({
+            where: {
+                subDomain: domain,
+            },
+        });
+    }
 
     const resolveTo = `${BUCKET_PATH}/${project.id}`;
 

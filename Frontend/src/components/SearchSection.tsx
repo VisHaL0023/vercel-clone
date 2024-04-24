@@ -40,8 +40,6 @@ const SearchSection: React.FC<Props> = ({ setCurrSection }) => {
                         <BiChevronDown className="text-xl" />
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
                         <DropdownMenuItem
                             className="cursor-pointer"
                             onClick={() => toggleVariant("create_project")}

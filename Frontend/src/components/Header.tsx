@@ -12,12 +12,14 @@ import { cn } from "@/lib/utils";
 import { useGlobalContext } from "@/app/context/AuthContext";
 import { tabNames } from "@/constant/tabName";
 import { getCurrUser } from "@/lib/getSession";
+import { useRouter } from "next/navigation";
 
 type Props = {};
 
 const pages = tabNames;
 
 export default function Header() {
+    const router = useRouter();
     const { user, setUser, setToken } = useGlobalContext();
 
     async function fetchData() {
@@ -38,12 +40,17 @@ export default function Header() {
     }, [setUser, setToken]);
 
     return (
-        <div className=" px-8 pt-4 border-b border-gray-500">
+        <div
+            className=" px-8 pt-4 border-b border-gray-500"
+            onClick={() => router.push("/")}
+        >
             {/* first section */}
-            <section className="flex justify-between  ">
+            <div className="flex justify-between  ">
                 {/* left */}
                 <div className="flex items-center gap-3  ">
-                    <VercelSvg />
+                    <div className="cursor-pointers">
+                        <VercelSvg />
+                    </div>
                     {/* slash  */}
                     <BsSlashLg className="dark:text-gray-500" />
 
@@ -68,7 +75,7 @@ export default function Header() {
                     </button>
                     {/* equl */}
                 </div>
-            </section>
+            </div>
 
             {/* second section */}
             <section className="flex gap-4 overflow-auto scrollbar-hide">

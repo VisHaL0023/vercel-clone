@@ -8,7 +8,7 @@ import { useGlobalContext } from "../context/AuthContext";
 import axiosInstance from "@/config/axiosInstance";
 import { getToken } from "@/lib/getSession";
 import { Fira_Code } from "next/font/google";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { extractRepoInfo } from "@/lib/helper";
 import {
     Card,
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { FaGithub } from "react-icons/fa";
 
 type Props = {};
 const firaCode = Fira_Code({ subsets: ["latin"] });
@@ -33,6 +34,11 @@ interface ProjectData {
     createdAt: string;
 }
 
+interface RepoData {
+    owner: string;
+    repoName: string;
+}
+
 const Page = (props: Props) => {
     const token = getToken();
     const { user } = useGlobalContext();
@@ -43,7 +49,8 @@ const Page = (props: Props) => {
     const [logs, setLogs] = useState<any[]>([]);
     const [isLogging, setIsLogging] = useState<boolean>(false);
     const [deployementId, setDeploymentId] = useState<string>("");
-    const [isDone, setDone] = useState<Boolean>(false);
+    const [isDone, setDone] = useState<boolean>(false);
+    const [respoURL, setRepoURL] = useState<RepoData>();
     const [deployPreviewURL, setDeployPreviewURL] = useState<
         string | undefined
     >();
@@ -63,6 +70,25 @@ const Page = (props: Props) => {
                 }
             );
             setProjectData(response.data.data);
+        } catch (error: any) {
+            const message = error.response.data.message;
+            toast.error(message);
+            console.log(error, "Something went worng");
+        }
+    }
+
+    async function changeStatusOfDeployment() {
+        try {
+            if (!deployementId) return;
+            await axiosInstance.post(
+                "getproject/changestatus",
+                { id: deployementId },
+                {
+                    headers: {
+                        Authorisation: token,
+                    },
+                }
+            );
         } catch (error: any) {
             const message = error.response.data.message;
             toast.error(message);
@@ -90,8 +116,7 @@ const Page = (props: Props) => {
             if (data && data.data) {
                 const { deployementId, url } = data.data;
                 setDeploymentId(deployementId);
-                const { owner, repoName } = extractRepoInfo(url);
-                setDeployPreviewURL(owner + "/" + repoName);
+                setDeployPreviewURL(url);
                 setLogs([{ log: "Please wait, starting your build..." }]);
                 setIsLogging(true);
             }
@@ -120,18 +145,14 @@ const Page = (props: Props) => {
                 }
             );
             setLogs((prevLogs) => {
-                // Filter out logs that are already present in the state
                 const newLogs = data?.logs.filter(
                     (log: any) =>
                         !prevLogs.some((prevLog) => prevLog.log === log.log)
                 );
-                // Concatenate the new logs with the existing logs
                 return [...prevLogs, ...newLogs];
             });
 
             logContainerRef.current?.scrollIntoView({ behavior: "smooth" });
-            console.log("data", data);
-            console.log("logs", logs);
         } catch (error: any) {
             const message = error.response.data.message;
             toast.error(message);
@@ -160,6 +181,17 @@ const Page = (props: Props) => {
         fetchProjectData();
     }, []);
 
+    useEffect(() => {
+        changeStatusOfDeployment();
+    }, [isDone]);
+
+    useEffect(() => {
+        const { owner, repoName } = extractRepoInfo(
+            projectData?.gitURL ? projectData?.gitURL : ""
+        );
+        setRepoURL({ owner, repoName });
+    }, [projectData]);
+
     useEffect(() => {}, [isDone]);
 
     return (
@@ -177,39 +209,22 @@ const Page = (props: Props) => {
                         </CardDescription>
                     </CardHeader>
                     <div className="flex items-center justify-between gap-4 mr-5">
-                        <Button
-                            className="border border-gray-400 rounded-r-sm"
-                            variant={"ghost"}
-                        >
-                            Repository
+                        <a href={projectData?.gitURL} target="_blank">
+                            <Button
+                                className="border border-gray-400 rounded-r-sm"
+                                variant={"ghost"}
+                            >
+                                Repository
+                            </Button>
+                        </a>
+                        <Button disabled={!isDone}>
+                            <a href={deployPreviewURL} target="_blank">
+                                Vist
+                            </a>
                         </Button>
-                        <Button>Vist</Button>
-                        {/* {!deployPreviewURL && (
-                            <Card className="mt-2 bg-slate-900 px-2 rounded-lg">
-                                {isDone ? (
-                                    <div className="w-full">
-                                        <CardContent>
-                                            Preview URL:{" "}
-                                            <a
-                                                target="_blank"
-                                                // className="text-sky-400 bg-sky-950 px-3 py-2 rounded-lg ml-3"
-                                                href={deployPreviewURL}
-                                            >
-                                                {deployPreviewURL}
-                                            </a>
-                                        </CardContent>
-                                    </div>
-                                ) : (
-                                    <p>
-                                        Please wait while we deploying your
-                                        project...
-                                    </p>
-                                )}
-                            </Card>
-                        )} */}
                     </div>
                 </div>
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-7">
                     <div>
                         <div className="w-[600px] mt-1 border rounded-lg border-gray-400 px-4 pt-6 ml-4">
                             <form>
@@ -248,14 +263,42 @@ const Page = (props: Props) => {
                                         <div className="flex space-y-1.5 items-center justify-between">
                                             <Label>Deployed URL</Label>
                                             <Label htmlFor="name">
-                                                {projectData?.createdAt}
+                                                {deployPreviewURL ? (
+                                                    <a
+                                                        href={deployPreviewURL}
+                                                        target="_blank"
+                                                    >
+                                                        {deployPreviewURL}
+                                                    </a>
+                                                ) : isLoading ? (
+                                                    <p className="text-gray-400">
+                                                        Deploying...
+                                                    </p>
+                                                ) : (
+                                                    <p className="text-gray-400">
+                                                        Not available
+                                                    </p>
+                                                )}
                                             </Label>
                                         </div>
                                         <div className="flex space-y-1.5 items-center justify-between">
-                                            <Label>Git URL</Label>
-                                            <Label htmlFor="name">
-                                                {projectData?.gitURL}
+                                            <Label className="flex items-center justify-center">
+                                                <FaGithub className="h-4 w-4 mr-2" />
+                                                Git URL
                                             </Label>
+                                            <a
+                                                href={projectData?.gitURL}
+                                                target="_blank"
+                                            >
+                                                <Label
+                                                    htmlFor="name"
+                                                    className="cursor-pointer"
+                                                >
+                                                    {respoURL?.owner +
+                                                        "/" +
+                                                        respoURL?.repoName}
+                                                </Label>
+                                            </a>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -267,19 +310,17 @@ const Page = (props: Props) => {
                                         disabled={isLoading}
                                         onClick={handleClickDeploy}
                                     >
-                                        <Label className="text-base">
-                                            Deploy
-                                        </Label>
+                                        <p className="text-base">Deploy</p>
                                     </Button>
                                 </CardFooter>
                             </form>
                         </div>
                     </div>
-                    <div className="flex flex-col items-center justify-center">
-                        {logs.length > 0 && (
-                            <ScrollArea className="w-96 whitespace-nowrap rounded-md border">
+                    <div className="w-full flex items-start justify-center">
+                        {logs.length > 0 ? (
+                            <ScrollArea className="w-96 ml-6 whitespace-nowrap rounded-md border">
                                 <div
-                                    className={`${firaCode.className} text-sm w-[400px] text-green-500 logs-container mt-5 border-green-500 border-2 rounded-lg p-4 h-[300px] overflow-y-auto`}
+                                    className={`${firaCode.className}  text-sm w-[110%] text-green-500 logs-container p-4 h-[400px] overflow-y-auto`}
                                 >
                                     <pre className="flex flex-col gap-1">
                                         {logs.map((log: any, i) => (
@@ -296,8 +337,13 @@ const Page = (props: Props) => {
                                         ))}
                                     </pre>
                                 </div>
-                                <ScrollBar orientation="horizontal" />
                             </ScrollArea>
+                        ) : (
+                            <div className="flex items-center justify-center w-[100%]">
+                                <p className="text-gray-400 text-lg">
+                                    Logs will appear here when deploy start
+                                </p>
+                            </div>
                         )}
                     </div>
                 </div>

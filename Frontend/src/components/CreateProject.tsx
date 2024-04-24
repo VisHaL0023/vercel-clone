@@ -95,7 +95,7 @@ const CreateProject = (props: Props) => {
 
     return (
         <div>
-            <div className="h-[400px] flex flex-row items-center justify-evenly">
+            <div className="h-[400px] flex flex-row items-center justify-evenly mt-5">
                 <div className="flex flex-col items-start justify-between gap-5">
                     <p className="text-4xl font-bold">
                         Let's build something new
@@ -107,64 +107,70 @@ const CreateProject = (props: Props) => {
                         Repository or paste your gitHub repo URL.
                     </p>
                 </div>
-                <Card className="w-[500px] mt-5">
-                    <form onSubmit={onSubmit}>
-                        <CardHeader>
-                            <CardTitle>Create project</CardTitle>
-                            <CardDescription>
-                                Deploy your new project in one-click.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="grid w-full items-center gap-4">
-                                <div className="flex flex-col space-y-1.5">
-                                    <Label htmlFor="name">Name</Label>
-                                    <Input
-                                        name="name"
-                                        className="mb-3"
-                                        placeholder="Project name"
-                                        type="text"
-                                        value={projectData.name}
-                                        onChange={handleInputChange}
-                                    />
+                <div className="flex flex-col items-start justify-center">
+                    <div className="w-[500px] border border-gray-400 rounded-lg p-3 mt-5">
+                        <form onSubmit={onSubmit}>
+                            <CardHeader>
+                                <CardTitle>Create project</CardTitle>
+                                <CardDescription>
+                                    Deploy your new project in one-click.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid w-full items-center gap-4">
+                                    <div className="flex flex-col space-y-1.5">
+                                        <Label htmlFor="name">Name</Label>
+                                        <Input
+                                            name="name"
+                                            className="mb-3"
+                                            placeholder="Project name"
+                                            type="text"
+                                            value={projectData.name}
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col space-y-1.5">
+                                        <Label htmlFor="name">
+                                            Custom Domain
+                                        </Label>
+                                        <Input
+                                            name="customDomain"
+                                            className="mb-3"
+                                            placeholder="Enter Custom Domain if you want"
+                                            type="text"
+                                            value={projectData.customDomain}
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
+                                    <div className="flex flex-col space-y-1.5">
+                                        <Label htmlFor="name">GitHub URL</Label>
+                                        <Input
+                                            name="gitURL"
+                                            className="mb-3"
+                                            placeholder="Enter GitHub URL"
+                                            type="text"
+                                            value={projectData.gitURL}
+                                            onChange={handleInputChange}
+                                        />
+                                    </div>
                                 </div>
-                                <div className="flex flex-col space-y-1.5">
-                                    <Label htmlFor="name">Custom Domain</Label>
-                                    <Input
-                                        name="customDomain"
-                                        className="mb-3"
-                                        placeholder="Enter Custom Domain if you want"
-                                        type="text"
-                                        value={projectData.customDomain}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                                <div className="flex flex-col space-y-1.5">
-                                    <Label htmlFor="name">GitHub URL</Label>
-                                    <Input
-                                        name="gitURL"
-                                        className="mb-3"
-                                        placeholder="Enter GitHub URL"
-                                        type="text"
-                                        value={projectData.gitURL}
-                                        onChange={handleInputChange}
-                                    />
-                                </div>
-                            </div>
-                        </CardContent>
-                        <CardFooter className="flex justify-between">
-                            <Button
-                                className="border border-gray-400"
-                                variant={"default"}
-                                size={"xl"}
-                                disabled={isLoading}
-                            >
-                                <IoCreate className="mr-3 h-5 w-5" />
-                                <p className="text-base">Create your project</p>
-                            </Button>
-                        </CardFooter>
-                    </form>
-                </Card>
+                            </CardContent>
+                            <CardFooter className="flex justify-between">
+                                <Button
+                                    className="border border-gray-400"
+                                    variant={"default"}
+                                    size={"xl"}
+                                    disabled={isLoading}
+                                >
+                                    <IoCreate className="mr-3 h-5 w-5" />
+                                    <p className="text-base">
+                                        Create your project
+                                    </p>
+                                </Button>
+                            </CardFooter>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     );

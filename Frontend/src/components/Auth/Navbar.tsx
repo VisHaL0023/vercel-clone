@@ -20,7 +20,7 @@ const Navbar = (props: Props) => {
                     <p className="text-gray-400">Contact</p>
                     <Button
                         className={
-                            " hover:dark:bg-gray-700 text-white border border-gray-400"
+                            " hover:dark:bg-gray-700  border border-gray-400"
                         }
                         variant={"ghost"}
                         size={"sm"}

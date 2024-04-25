@@ -17,6 +17,14 @@ async function getProject(req, res) {
             where: {
                 id: id,
             },
+            include: {
+                Deployement: {
+                    orderBy: {
+                        updatedAt: "desc",
+                    },
+                    take: 1,
+                },
+            },
         });
         successObj.success = true;
         successObj.data = project;
@@ -34,13 +42,21 @@ async function getAllProject(req, res) {
     try {
         const userId = req.user.id;
 
-        const projects = await prisma.project.findMany({
+        const projectsWithDeployments = await prisma.project.findMany({
             where: {
                 userId: userId,
             },
+            include: {
+                Deployement: {
+                    orderBy: {
+                        updatedAt: "desc",
+                    },
+                    take: 1,
+                },
+            },
         });
         successObj.success = true;
-        successObj.data = projects;
+        successObj.data = projectsWithDeployments;
         return res.status(StatusCodes.OK).json(successObj);
     } catch (error) {
         //Handling error

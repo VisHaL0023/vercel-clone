@@ -1,27 +1,39 @@
 "use client";
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { FaArrowRight, FaGithub } from "react-icons/fa";
 import { LiaGitlab } from "react-icons/lia";
 import { IoLogoBitbucket } from "react-icons/io5";
 import { CiMail } from "react-icons/ci";
+import { useGlobalContext } from "../context/AuthContext";
+import { useRouter } from "next/navigation";
 
 interface Props {
     setVarriant: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 const AuthProvider: React.FC<Props> = ({ setVarriant }) => {
+    const token = localStorage.getItem("token");
+
+    const router = useRouter();
+
     const toggleVariant = useCallback((val: string) => {
         setVarriant(val);
     }, []);
 
+    useEffect(() => {
+        if (token) {
+            router.push("/");
+        }
+    }, [token]);
+
     return (
-        <div className="mt-10 flex flex-col items-center gap-3 justify-center">
+        <div className="my-10 flex flex-col items-center gap-3 justify-center">
             <p className="text-3xl font-bold">Log in to Vercel</p>
 
             <div className="mt-10 flex flex-col gap-3 justify-center items-center">
                 <Button
-                    className="hover:bg-slate-600"
+                    className="hover:bg-slate-500"
                     variant={"secondary"}
                     size={"xl"}
                 >

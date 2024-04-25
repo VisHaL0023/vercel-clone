@@ -13,7 +13,7 @@ export function getSession() {
         cookies[name] = value;
     });
 
-    return cookies?.__clerk_db_jwt;
+    return cookies?.__clerk_db_jwt ? true : false;
 }
 
 export function removeSession() {

@@ -95,19 +95,19 @@ const CreateProject = (props: Props) => {
 
     return (
         <div>
-            <div className="h-[400px] flex flex-row items-center justify-evenly mt-5">
+            <div className="flex flex-row items-center justify-evenly mt-5 border border-gray-400 rounded-lg p-3">
                 <div className="flex flex-col items-start justify-between gap-5">
                     <p className="text-4xl font-bold">
                         Let's build something new
                     </p>
-                    <p className="text-base text-gray-300">
+                    <p className="text-base text-gray-500">
                         To deploy a new React/Vite Project, import an existing
                         Git
                         <br />
                         Repository or paste your gitHub repo URL.
                     </p>
                 </div>
-                <div className="flex flex-col items-start justify-center">
+                <div className="flex flex-col items-start justify-center mb-5">
                     <div className="w-[500px] border border-gray-400 rounded-lg p-3 mt-5">
                         <form onSubmit={onSubmit}>
                             <CardHeader>

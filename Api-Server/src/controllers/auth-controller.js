@@ -94,6 +94,12 @@ async function SendOtp(req, res) {
         // Calling user-service for sending otp
         const response = await UserService.SendOtp(email);
 
+        console.log("response", response);
+        if (response.message === "User Exists") {
+            errorObj.message = "Email already exists";
+            errorObj.success = false;
+            return res.status(StatusCodes.BAD_REQUEST).json(errorObj);
+        }
         successObj.message = "OTP Created successfully";
         successObj.data = response;
         return res.status(StatusCodes.OK).json(successObj);

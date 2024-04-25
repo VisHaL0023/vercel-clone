@@ -318,26 +318,24 @@ const Page = (props: Props) => {
                     </div>
                     <div className="w-full flex items-start justify-center">
                         {logs.length > 0 ? (
-                            <ScrollArea className="w-96 ml-6 whitespace-nowrap rounded-md border">
-                                <div
-                                    className={`${firaCode.className}  text-sm w-[110%] text-green-500 logs-container p-4 h-[400px] overflow-y-auto`}
-                                >
-                                    <pre className="flex flex-col gap-1">
-                                        {logs.map((log: any, i) => (
-                                            <code
-                                                ref={
-                                                    logs.length - 1 === i
-                                                        ? logContainerRef
-                                                        : undefined
-                                                }
-                                                key={i}
-                                            >
-                                                {log && `> ${log.log}`}
-                                            </code>
-                                        ))}
-                                    </pre>
-                                </div>
-                            </ScrollArea>
+                            <div
+                                className={`${firaCode.className} border border-gray-500 rounded-md text-sm w-[80%] text-green-500 logs-container p-4 px-4 h-[400px] overflow-y-auto`}
+                            >
+                                <pre className="flex flex-col gap-1">
+                                    {logs.map((log: any, i) => (
+                                        <code
+                                            ref={
+                                                logs.length - 1 === i
+                                                    ? logContainerRef
+                                                    : undefined
+                                            }
+                                            key={i}
+                                        >
+                                            {log && `> ${log.log}`}
+                                        </code>
+                                    ))}
+                                </pre>
+                            </div>
                         ) : (
                             <div className="flex items-center justify-center w-[100%]">
                                 <p className="text-gray-400 text-lg">

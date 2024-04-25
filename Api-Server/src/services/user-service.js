@@ -3,6 +3,7 @@ const { PrismaClient, Prisma } = require("@prisma/client");
 const bcrypt = require("bcrypt");
 const jsonwebtoken = require("jsonwebtoken");
 const otpGenerator = require("otp-generator");
+const { sendVerificationEmail } = require("../utils/helper");
 
 const prisma = new PrismaClient();
 
@@ -130,11 +131,9 @@ async function SendOtp(email) {
             },
         });
 
-        console.log("user", user);
-
         if (user) {
             throw {
-                message: "User already exists for given email",
+                message: "User Exists",
             };
         }
 
@@ -158,6 +157,8 @@ async function SendOtp(email) {
             email: email,
             otp: otp,
         };
+
+        await sendVerificationEmail(email, otp);
 
         // Save OTP to database for 5 mints
         const response = await prisma.oTP.create({ data: data });

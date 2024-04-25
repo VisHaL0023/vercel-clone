@@ -63,7 +63,8 @@ const SignUp: React.FC<Props> = ({ setVarriant }) => {
             console.log("otp response", response);
             toast.success("OTP sent");
             setSendOTP(true);
-        } catch (error) {
+        } catch (error: any) {
+            toast.error(error?.response?.data?.message);
             console.log("Error while sending OTP");
         }
         setIsLoading(false);
@@ -110,7 +111,7 @@ const SignUp: React.FC<Props> = ({ setVarriant }) => {
     }, []);
 
     return (
-        <div className="h-[400px] mt-10 flex flex-col items-center gap-3 justify-center">
+        <div className="h-[400px] my-10 flex flex-col items-center gap-3 justify-center">
             <p className="text-3xl font-bold">
                 {!sendOTP ? "Sign up to Vercel" : "Enter your OTP"}
             </p>

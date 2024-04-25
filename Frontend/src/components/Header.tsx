@@ -4,15 +4,34 @@ import React, { useEffect } from "react";
 import VercelSvg from "./svg/vercel-svg";
 import { HiOutlineChevronUpDown } from "react-icons/hi2";
 
-import { FiBell } from "react-icons/fi";
+import { FiBell, FiSun } from "react-icons/fi";
 import { BsSlashLg } from "react-icons/bs";
 import { FaEquals } from "react-icons/fa";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { useGlobalContext } from "@/app/context/AuthContext";
 import { tabNames } from "@/constant/tabName";
-import { getCurrUser } from "@/lib/getSession";
+import { getCurrUser, removeSession } from "@/lib/getSession";
 import { useRouter } from "next/navigation";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuPortal,
+    DropdownMenuRadioGroup,
+    DropdownMenuSeparator,
+    DropdownMenuShortcut,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { LogOut, Settings, User } from "lucide-react";
+import { IoMoonOutline } from "react-icons/io5";
+import { useTheme } from "next-themes";
+import { RiComputerLine } from "react-icons/ri";
 
 type Props = {};
 
@@ -21,6 +40,20 @@ const pages = tabNames;
 export default function Header() {
     const router = useRouter();
     const { user, setUser, setToken } = useGlobalContext();
+    const { theme, setTheme } = useTheme();
+
+    async function handleLogout() {
+        console.log("start");
+
+        await new Promise<void>((resolve) => {
+            localStorage.clear();
+            resolve(); // Resolve immediately after clearing localStorage
+        });
+        removeSession();
+        router.push("/auth");
+        setUser({});
+        console.log("end");
+    }
 
     async function fetchData() {
         let token = localStorage.getItem("token");
@@ -38,6 +71,8 @@ export default function Header() {
     useEffect(() => {
         fetchData();
     }, [setUser, setToken]);
+
+    useEffect(() => {}, [user]);
 
     return (
         <div
@@ -70,10 +105,80 @@ export default function Header() {
                     <button className="border   h-9 w-9  flex items-center justify-center dark:border-gray-500 rounded-full dark:text-gray-500 dark:hover:text-white ">
                         <FiBell />
                     </button>
-                    <button className="border   h-9 w-9  flex items-center justify-center dark:border-gray-500 rounded-full dark:text-gray-500 dark:hover:text-white ">
-                        <FaEquals />
-                    </button>
-                    {/* equl */}
+
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button
+                                variant="outline"
+                                className="border border-gray-500 rounded-md"
+                            >
+                                <FaEquals />
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="w-56">
+                            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuGroup>
+                                <DropdownMenuItem>
+                                    <User className="mr-2 h-4 w-4" />
+                                    <span>Profile</span>
+                                    <DropdownMenuShortcut>
+                                        ⇧⌘P
+                                    </DropdownMenuShortcut>
+                                </DropdownMenuItem>
+
+                                <DropdownMenuItem>
+                                    <Settings className="mr-2 h-4 w-4" />
+                                    <span>Settings</span>
+                                    <DropdownMenuShortcut>
+                                        ⌘S
+                                    </DropdownMenuShortcut>
+                                </DropdownMenuItem>
+                            </DropdownMenuGroup>
+                            <DropdownMenuRadioGroup>
+                                <DropdownMenuSub>
+                                    <DropdownMenuSubTrigger>
+                                        <IoMoonOutline className="mr-2 h-4 w-4" />
+                                        <span>Theme</span>
+                                    </DropdownMenuSubTrigger>
+                                    <DropdownMenuPortal>
+                                        <DropdownMenuSubContent>
+                                            <DropdownMenuItem
+                                                onClick={() =>
+                                                    setTheme("system")
+                                                }
+                                            >
+                                                <IoMoonOutline className="mr-2 h-4 w-4" />
+                                                <span>Dark</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={() =>
+                                                    setTheme("light")
+                                                }
+                                            >
+                                                <FiSun className="mr-2 h-4 w-4" />
+                                                <span>Light</span>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem
+                                                onClick={() =>
+                                                    setTheme("system")
+                                                }
+                                            >
+                                                <RiComputerLine className="mr-2 h-4 w-4" />
+                                                <span>System default</span>
+                                            </DropdownMenuItem>
+                                        </DropdownMenuSubContent>
+                                    </DropdownMenuPortal>
+                                </DropdownMenuSub>
+                            </DropdownMenuRadioGroup>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={handleLogout}>
+                                <LogOut className="mr-2 h-4 w-4" />
+                                <span>Log out</span>
+                                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </div>
 

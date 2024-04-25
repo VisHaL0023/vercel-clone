@@ -4,6 +4,4 @@ combined.log
 src/config/config.json
 # Local Netlify folder
 .netlify
-kafka.pem
-ca.pem
 build-server/script.js

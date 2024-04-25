@@ -2,6 +2,7 @@
 
 Deploy your vite/react project like on vercel in just 2 minutes.
 
+Note: **Due to cost issue I'm not uploading it to anywhere, just watch video for demo** -> [Vercel-Demo](https://drive.google.com/file/d/1Bhjo2iPgWPHCduJ4dr4U6N3qybeuvbJ9/view?usp=sharing)
 ### Setup Guide
 
 This Project contains following services and folders:
@@ -21,15 +22,12 @@ This Project contains following services and folders:
 
 At this point following services would be up and running:
 
-| S.No | Service            | PORT    |
-| ---- | ------------------ | ------- |
-| 1    | `api-server`       | `:9000` |
-| 2    | `socket.io-server` | `:9002` |
-| 3    | `s3-reverse-proxy` | `:8000` |
+| S.No | Service                | PORT    |
+| ---- | ---------------------- | ------- |
+| 1    | `api-server`           | `:9000` |
+| 2    | `kafka and clickhouse` | `:aiven`|
+| 3    | `s3-reverse-proxy`     | `:8000` |
 
-### Demo
-
-[Watch The Demo Video](https://drive.google.com/file/d/1e2jTvZJie4w1CwUP67CWhTgI3CU8lDGf/view?usp=sharing)
 
 ### Architecture
 

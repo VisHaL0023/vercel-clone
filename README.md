@@ -30,5 +30,5 @@ At this point following services would be up and running:
 
 
 ### Architecture
+<img width="670" alt="Vercel-design" src="https://github.com/VisHaL0023/vercel-clone/assets/73978467/39b8258a-99ca-4c38-b51f-f18cc6a39bec">
 
-<img width="916" alt="Vercel-clone-diagram" src="https://github.com/VisHaL0023/vercel-clone/assets/73978467/173795c8-4b79-4788-8002-1b6c3bb05053">

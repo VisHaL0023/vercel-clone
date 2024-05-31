@@ -22,7 +22,11 @@ const GlobalContext = createContext<ContextProps>({
     setToken: (): string => "",
 });
 
-export const GlobalContextProvider = ({ children }) => {
+interface GlobalContextProps {
+    children: React.ReactNode; // Generic type for any valid React child
+}
+
+export const GlobalContextProvider = ({ children }: GlobalContextProps) => {
     const [user, setUser] = useState({});
     const [token, setToken] = useState<string | null>("");
 

@@ -1,8 +1,8 @@
-# Vercel Clone
+# Project Builder
 
 Deploy your vite/react project like on vercel in just 2 minutes.
 
-Note: **Due to cost issue I'm not uploading it to anywhere, just watch video for demo** -> [Vercel-Demo](https://drive.google.com/file/d/1Bhjo2iPgWPHCduJ4dr4U6N3qybeuvbJ9/view?usp=sharing)
+Note: **Due to cost issue I'm not uploading it to anywhere, just watch video for demo** -> [Demo](https://drive.google.com/file/d/1Bhjo2iPgWPHCduJ4dr4U6N3qybeuvbJ9/view?usp=sharing)
 ### Setup Guide
 
 This Project contains following services and folders:

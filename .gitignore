@@ -4,6 +4,6 @@ combined.log
 src/config/config.json
 # Local Netlify folder
 .netlify
-/build-server/script.js
-/Api-Server/kafka.pem
-/build-server/kafka.pem
+Api-Server/kafka.pem
+build-server/kafka.pem
+S3-reverse-proxy/prisma/ca.pem

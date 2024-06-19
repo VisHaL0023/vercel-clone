@@ -74,6 +74,34 @@ async function DeployProject(req, res) {
                             },
                             { name: "PROJECT_ID", value: projectId },
                             { name: "DEPLOYEMENT_ID", value: deployement.id },
+                            {
+                                name: "KAFKA_BROKERS",
+                                value: ServerConfig.KAFKA_BROKERS,
+                            },
+                            {
+                                name: "KAFKA_PASSWORD",
+                                value: ServerConfig.KAFKA_PASSWORD,
+                            },
+                            {
+                                name: "KAFKA_TOPICS",
+                                value: ServerConfig.KAFKA_TOPICS,
+                            },
+                            {
+                                name: "S3_REGION",
+                                value: ServerConfig.S3_REGION,
+                            },
+                            {
+                                name: "BUCKET_NAME",
+                                value: ServerConfig.BUCKET_NAME,
+                            },
+                            {
+                                name: "S3_ACCESS_KEY_ID",
+                                value: ServerConfig.S3_ACCESS_KEY_ID,
+                            },
+                            {
+                                name: "S3_SECRET_ACCESS_KEY",
+                                value: ServerConfig.S3_SECRET_ACCESS_KEY,
+                            },
                         ],
                     },
                 ],

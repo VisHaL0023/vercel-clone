@@ -5,26 +5,32 @@ const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 const mime = require("mime-types");
 const { Kafka } = require("kafkajs");
 
+const PROJECT_ID = process.env.PROJECT_ID;
+const DEPLOYEMENT_ID = process.env.DEPLOYEMENT_ID;
+const KAFKA_BROKERS = process.env.KAFKA_BROKERS;
+const KAFKA_TOPICS = process.env.KAFKA_TOPICS;
+const S3_REGION = process.env.S3_REGION;
+const BUCKET_NAME = process.env.BUCKET_NAME;
+const S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID;
+const S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY;
+
 const s3Client = new S3Client({
-    region: process.env.S3_REGION,
+    region: S3_REGION,
     credentials: {
-        accessKeyId: process.env.S3_ACCESS_KEY_ID,
-        secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+        accessKeyId: S3_ACCESS_KEY_ID,
+        secretAccessKey: S3_SECRET_ACCESS_KEY,
     },
 });
 
-const PROJECT_ID = process.env.PROJECT_ID;
-const DEPLOYEMENT_ID = process.env.DEPLOYEMENT_ID;
-
 const kafka = new Kafka({
     clientId: `docker-build-server-${DEPLOYEMENT_ID}`,
-    brokers: [process.env.KAFKA_BROKERS],
+    brokers: [KAFKA_BROKERS],
     ssl: {
         ca: [fs.readFileSync(path.join(__dirname, "kafka.pem"), "utf-8")],
     },
     sasl: {
-        username: process.env.KAFKA_USERNAME,
-        password: process.env.KAFKA_PASSWORD,
+        username: "avnadmin",
+        password: KAFKA_PASSWORD,
         mechanism: "plain",
     },
     connectionTimeout: 100000,
@@ -39,7 +45,7 @@ const producer = kafka.producer();
 
 async function publishlog(log) {
     await producer.send({
-        topic: process.env.KAFKA_TOPICS,
+        topic: KAFKA_TOPICS,
         messages: [
             {
                 key: "log",
@@ -97,7 +103,7 @@ async function init() {
 
             // else upload it on s3
             const command = new PutObjectCommand({
-                Bucket: process.env.BUCKET_NAME,
+                Bucket: BUCKET_NAME,
                 Key: `__outputs/${PROJECT_ID}/${file}`,
                 Body: fs.createReadStream(filePath),
                 // Use mime-type to get file extenstion
